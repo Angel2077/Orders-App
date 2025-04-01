@@ -61,6 +61,14 @@ var compraIdCounter = 1
 
 // Lista para almacenar todas las compras realizadas
 val listaDeCompras = mutableListOf<Compra>()
+// Lista mutable de productos
+
+val listaDeProductos = mutableListOf<Producto>()
+
+// Función para agregar un producto
+fun addProducto(producto: Producto) {
+    listaDeProductos.add(producto)
+}
 
 
 // Funcion para agregar productos de lista

@@ -55,14 +55,13 @@ fun generaFacturaPDF(compra: Compra, context: Context) {
     pdfDocument.finishPage(page)
 
     try {
-        // Guardar el PDF en la carpeta Descargas
-        val filePath = File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-            "Factura_${compra.nombre}.pdf"
-        )
-        if (!filePath.parentFile?.exists()!!) {
-            filePath.parentFile?.mkdirs()
-        }
+        // Guardar el PDF en la carpeta Descargas (verificar permisos en Android 10+)
+        val downloadsDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+        val filePath = File(downloadsDir, "Factura_${compra.nombre}.pdf")
+
+        // Asegúrate de que el directorio existe antes de escribir
+        filePath.parentFile?.takeIf { !it.exists() }?.mkdirs()
+
         pdfDocument.writeTo(FileOutputStream(filePath))
         pdfDocument.close()
 
