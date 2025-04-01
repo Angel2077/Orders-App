@@ -45,15 +45,9 @@ fun MainApp() {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = Routes.LOGIN) {
-        composable(Routes.LOGIN) {
-            Login(navController)
-        }
-        composable(Routes.REGISTER) {
-            Register(navController)
-        }
-        composable(Routes.HOME) {
-            MenuBar(navController)
-        }
+        composable(Routes.LOGIN) { Login(navController) }
+        composable(Routes.REGISTER) { Register(navController) }
+        composable(Routes.HOME) { MenuBar(navController) }
         composable(Routes.DETALLE) { backStackEntry ->
             val nombre = backStackEntry.arguments?.getString("nombre") ?: ""
             val precio = backStackEntry.arguments?.getString("precio")?.toIntOrNull() ?: 0
@@ -62,12 +56,10 @@ fun MainApp() {
                 nombre = nombre,
                 precio = precio,
                 descripcion = descripcion,
-                onRegistrarCompra = { /* Implementa registrar compra */ },
+                onRegistrarCompra = { /* Lógica para registrar compra */ }
             )
         }
-        composable(Routes.MIS_COMPRAS) {
-            MisComprasScreen()
-        }
+        composable(Routes.AGREGAR_PRODUCTO) { AgregarProductoScreen(navController = navController) }
     }
 }
 
@@ -247,18 +239,7 @@ fun Register(navController: NavHostController) {
     }
 }
 
-fun formatearRut(rut: String): String {
-    val rutLimpio = rut.replace(Regex("[^\\dKk]"), "")
-    if (rutLimpio.length < 8 || rutLimpio.length > 9) return rutLimpio
-    val numero = rutLimpio.substring(0, rutLimpio.length - 1)
-    val verificador = rutLimpio.last()
 
-    // Formateamos el número agregando puntos cada 3 dígitos desde la derecha
-    val numeroFormateado = numero.reversed().chunked(3).joinToString(".").reversed()
-
-    // Devolvemos el RUT con el número formateado y el verificador
-    return "$numeroFormateado-$verificador"
-}
 
 
 
@@ -321,5 +302,5 @@ object Routes {
     const val REGISTER = "register"
     const val HOME = "home"
     const val DETALLE = "detalle/{nombre}/{precio}/{descripcion}"
-    const val MIS_COMPRAS = "misCompras"
+    const val AGREGAR_PRODUCTO = "Agrega"
 }

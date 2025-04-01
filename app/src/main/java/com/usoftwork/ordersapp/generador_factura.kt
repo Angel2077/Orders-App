@@ -11,45 +11,47 @@ import com.usoftwork.ordersapp.Compra
 import java.io.File
 import java.io.FileOutputStream
 
+
 fun generaFacturaPDF(compra: Compra, context: Context) {
-    // Crear documento PDF con tamaño A4 (595 x 842 puntos aproximadamente)
+    // Tamaño de página adaptado para impresoras de boletas (puedes ajustar según la impresora)
+    val pageInfo = PdfDocument.PageInfo.Builder(300, 600, 1).create()
     val pdfDocument = PdfDocument()
-    val pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create()
     val page = pdfDocument.startPage(pageInfo)
     val canvas = page.canvas
 
-    // Fondo blanco (opcional, en caso de que el canvas tenga otro color por defecto)
+    // Fondo blanco para asegurar la buena legibilidad
     canvas.drawColor(Color.WHITE)
 
-    // Configuración del paint para el título
+    // Configuración del paint para título y contenido
     val paint = Paint().apply {
         color = Color.BLACK
-        textSize = 24f
+        textSize = 18f  // Tamaño reducido para boletas
         isFakeBoldText = true
         textAlign = Paint.Align.CENTER
     }
 
-    // Título centrado en la parte superior
-    canvas.drawText("Factura de Compra", pageInfo.pageWidth / 2f, 50f, paint)
+    // Título centrado
+    canvas.drawText("Factura", pageInfo.pageWidth / 2f, 30f, paint)
 
-    // Línea separadora
-    paint.strokeWidth = 2f
-    paint.textSize = 16f
+    // Línea separadora para separar el título del contenido
+    paint.strokeWidth = 1f
     paint.isFakeBoldText = false
     paint.textAlign = Paint.Align.LEFT
-    canvas.drawLine(20f, 70f, pageInfo.pageWidth - 20f, 70f, paint)
+    canvas.drawLine(10f, 40f, pageInfo.pageWidth - 10f, 40f, paint)
 
-    // Contenido de la factura con espaciado uniforme
-    val startY = 100f
-    val lineSpacing = 25f
+    // Ajustar tamaño de fuente para el contenido
+    paint.textSize = 14f
 
-    canvas.drawText("Producto: ${compra.nombre}", 20f, startY, paint)
-    canvas.drawText("Cantidad: ${compra.cantidad}", 20f, startY + lineSpacing, paint)
-    canvas.drawText("Precio Unitario: ${compra.precioUnitario} CLP", 20f, startY + 2 * lineSpacing, paint)
-    canvas.drawText("Total: ${compra.total} CLP", 20f, startY + 3 * lineSpacing, paint)
-    canvas.drawText("Fecha: ${compra.fecha}", 20f, startY + 4 * lineSpacing, paint)
+    // Contenido de la factura con espaciado reducido
+    val startY = 60f
+    val lineSpacing = 20f
 
-    // Finalizar la página
+    canvas.drawText("Producto: ${compra.nombre}", 10f, startY, paint)
+    canvas.drawText("Cant: ${compra.cantidad}", 10f, startY + lineSpacing, paint)
+    canvas.drawText("Precio: ${compra.precioUnitario} CLP", 10f, startY + 2 * lineSpacing, paint)
+    canvas.drawText("Total: ${compra.total} CLP", 10f, startY + 3 * lineSpacing, paint)
+    canvas.drawText("Fecha: ${compra.fecha}", 10f, startY + 4 * lineSpacing, paint)
+
     pdfDocument.finishPage(page)
 
     try {
@@ -66,10 +68,10 @@ fun generaFacturaPDF(compra: Compra, context: Context) {
 
         Toast.makeText(context, "Factura generada en ${filePath.path}", Toast.LENGTH_LONG).show()
 
-        // Obtener URI segura a través de FileProvider
+        // Obtener URI segura con FileProvider
         val uri: Uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", filePath)
 
-        // Abrir el PDF generado
+        // Intent para abrir el PDF
         val intent = Intent(Intent.ACTION_VIEW).apply {
             setDataAndType(uri, "application/pdf")
             flags = Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_GRANT_READ_URI_PERMISSION

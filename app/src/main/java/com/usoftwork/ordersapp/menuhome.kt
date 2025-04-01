@@ -3,51 +3,38 @@
 package com.usoftwork.ordersapp
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import generaFacturaPDF
+import com.usoftwork.ordersapp.ui.theme.DarkNavyBlue
 
 // Clase para productos
 data class Producto(
@@ -75,18 +62,18 @@ var compraIdCounter = 1
 // Lista para almacenar todas las compras realizadas
 val listaDeCompras = mutableListOf<Compra>()
 
-/*
+
 // Funcion para agregar productos de lista
 fun getProductos(): List<Producto> {
     return listOf(
-        Producto("Laptop Gamer", 1200000, "Laptop gaming con una rtx 3070 y tun ryzen 7 5700h.", R.drawable.asus, 1),
-        Producto("Samsung A25 5G", 249000, "El mejor compañero para tu día a día.", R.drawable.samsumg, 1),
+        Producto("Laptop Gamer", 1200000, "Laptop gaming con una rtx 3070 y tun ryzen 7 5700h.", R.drawable.designer, 1),
+        Producto("Samsung A25 5G", 249000, "El mejor compañero para tu día a día.", R.drawable.designer, 1),
         Producto("Tablet", 500000, "Tablet para todas tus necesidades", R.drawable.designer, 1),
-        Producto("Auriculares lenovo Bluetooth", 25000, "Sonido de alta calidad, bluetooth 5.3, diseño ergonómico", R.drawable.lenovo, 1),
+        Producto("Auriculares lenovo Bluetooth", 25000, "Sonido de alta calidad, bluetooth 5.3, diseño ergonómico", R.drawable.designer, 1),
         Producto("Monitor 144hz", 239000, "Pantalla de 27 pulgadas con resolución FHD a 144hz con display port", R.drawable.designer, 1)
     )
 }
-*/
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -99,7 +86,7 @@ fun MenuBar(navController: NavHostController) {
         CenterAlignedTopAppBar(
             title = { Text("Mi App") },
             colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = Color.darkGreen
+                containerColor = DarkNavyBlue
             ),
             actions = {
                 IconButton(
@@ -108,7 +95,7 @@ fun MenuBar(navController: NavHostController) {
                     }
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.desi),
+                        painter = painterResource(id = R.drawable.designer),
                         contentDescription = "Mis Compras",
                         modifier = Modifier.size(24.dp)
                     )
@@ -125,12 +112,6 @@ fun MenuBar(navController: NavHostController) {
                         )
                     },
                     placeholder = { Text("Buscar...", color = Color.LightGray) },
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = Color.Transparent,
-                        unfocusedBorderColor = Color.Transparent,
-                        cursorColor = Color.White,
-                        containerColor = Color.Gray.copy(alpha = 0.3f)
-                    ),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     keyboardActions = KeyboardActions(onSearch = {
                         focusManager.clearFocus()
@@ -142,7 +123,6 @@ fun MenuBar(navController: NavHostController) {
             }
         )
 
-        Box_Productos(navController = navController, searchQuery = Buscador)
 
         Button(
             onClick = { navController.navigate("misCompras") },
@@ -168,90 +148,14 @@ fun Navigation(navController: NavHostController) {
                 onRegistrarCompra = TODO()
             )
         }
-        composable("misCompras") {
-            MisComprasScreen()
-        }
+
     }
 }
 
-@Composable
-fun Box_Productos(navController: NavHostController, searchQuery: String) {
-    val productos = getProductos()
 
-    val filteredProducts = productos.filter { product ->
-        product.nombre.contains(searchQuery, ignoreCase = true) ||
-                product.descripcion.contains(searchQuery, ignoreCase = true)
-    }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        items(filteredProducts) { producto ->
-            ProductCard(
-                producto = producto,
-                modifier = Modifier.fillMaxWidth(),
-                onClick = {
-                    navController.navigate("detalle/${producto.nombre}/${producto.precio}/${producto.descripcion}")
-                }
-            )
-        }
-    }
-}
 
-@Composable
-fun ProductCard(
-    producto: Producto,
-    modifier: Modifier,
-    onClick: () -> Unit
-) {
-    Card(
-        modifier = modifier.clickable {
-            onClick()
-        },
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Image(painter = painterResource(id = producto.imagenId), contentDescription = producto.nombre)
-            Text(text = producto.nombre, style = MaterialTheme.typography.bodyMedium)
-            Text(text = "${producto.precio} CLP", style = MaterialTheme.typography.bodySmall)
-        }
-    }
-}
 
-@Composable
-fun MisComprasScreen() {
-    val context = LocalContext.current
-    val compras = listaDeCompras  // Usar la lista global
-
-    LazyColumn {
-        items(compras) { compra ->
-            Text("Compra ID: ${compra.id}, Fecha: ${compra.fecha}, Total: $${compra.total}")
-            Button(
-                onClick = {
-                    generaFacturaPDF(compra, context)
-                },
-                modifier = Modifier.padding(8.dp)
-            ) {
-                Text("Generar PDF")
-            }
-            HorizontalDivider()
-        }
-    }
-}
-
-class CompraViewModel : ViewModel() {
-    private val _compras = mutableStateListOf<Compra>()
-    val compras: SnapshotStateList<Compra> get() = _compras
-
-    fun agregarCompra(compra: Compra) {
-        _compras.add(compra)
-    }
-}
 
 
 
