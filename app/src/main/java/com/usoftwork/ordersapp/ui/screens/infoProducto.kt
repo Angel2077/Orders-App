@@ -1,4 +1,4 @@
-package com.usoftwork.ordersapp
+package com.usoftwork.ordersapp.ui.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -31,7 +31,6 @@ fun DetalleProductoScreen(
     nombre: String,
     descripcion: String,
     precio: Int,
-    onRegistrarCompra: (Compra) -> Unit
 ) {
     // Estado para almacenar la cantidad seleccionada por el usuario
     var cantidad by remember { mutableIntStateOf(1) }
@@ -68,36 +67,6 @@ fun DetalleProductoScreen(
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
         )
-
-        // Botón de compra
-        Button(
-            onClick = {
-                showBoleta = true // Mostrar la boleta cuando se haga clic en "Comprar"
-
-                // Generar un nuevo ID de compra (usando el contador global)
-                val compraId = compraIdCounter
-                compraIdCounter++  // Incrementar el contador para la siguiente compra
-
-                // Registrar la compra
-                val compra = Compra(
-                    id = compraId,  // Asignar un ID único
-                    nombre = nombre,
-                    cantidad = cantidad,
-                    precioUnitario = precio,
-                    total = total,
-                    fecha = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date()),
-                )
-
-                // Añadir la compra a la lista de compras
-                listaDeCompras.add(compra)
-
-                // Llamar a la función para registrar la compra (puede ser usada para persistencia o mostrar la compra)
-                onRegistrarCompra(compra)
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Comprar")
-        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
