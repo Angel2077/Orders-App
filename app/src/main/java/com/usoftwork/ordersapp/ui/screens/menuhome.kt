@@ -95,12 +95,12 @@ fun MenuBar(navController: NavHostController) {
         // Opciones del menú
         Column(modifier = Modifier.fillMaxWidth()) {
             MenuButton(
-                onClick = {navController.navigate("Armar")},
+                onClick = {navController.navigate("armar")},
                 text = "Crear pedido",
                 icon = Icons.Default.PlayArrow
             )
             MenuButton(
-                onClick = {navController.navigate("Listar")},
+                onClick = {navController.navigate("listar")},
                 text = "Listado de pedidos",
                 icon = Icons.Default.List
             )
@@ -116,7 +116,7 @@ fun MenuBar(navController: NavHostController) {
 
             )
             MenuButton(
-                onClick = {navController.navigate("Analisis")},
+                onClick = {navController.navigate("analizar")},
                 text = "Analisis de ventas",
                 icon = R.drawable.analitic
             )

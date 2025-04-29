@@ -37,6 +37,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.usoftwork.ordersapp.data.classes.Create_Pedido
+import com.usoftwork.ordersapp.data.functions.SalesAnalysis
+import com.usoftwork.ordersapp.data.classes.ListadoPedido
 import com.usoftwork.ordersapp.ui.screens.MenuBar
 import com.usoftwork.ordersapp.ui.theme.DarkModeButton
 import com.usoftwork.ordersapp.ui.theme.DarkNavyBlue
@@ -45,7 +48,6 @@ import com.usoftwork.ordersapp.ui.theme.OrdersAppTheme
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
-import com.usoftwork.ordersapp.R
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -73,6 +75,10 @@ class MainActivity : ComponentActivity() {
                         composable(Routes.LOGIN) { Login(navController) }
                         composable(Routes.REGISTER) { Register(navController) }
                         composable(Routes.HOME) { MenuBar(navController) }
+                        composable(Routes.ARMAR) { Create_Pedido(navController) }
+                        composable(Routes.LISTAR) { ListadoPedido(navController) }
+                        composable(Routes.ANALYSIS) { SalesAnalysis(navController) }
+
                     }
                 }
             }
@@ -315,5 +321,8 @@ class MainActivity : ComponentActivity() {
         const val LOGIN = "login"
         const val REGISTER = "register"
         const val HOME = "home"
+        const val ARMAR = "armar"
+        const val LISTAR = "listar"
+        const val ANALYSIS = "analizar"
     }
 
