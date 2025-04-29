@@ -24,7 +24,7 @@ val SeedGreen = Color(27, 126, 7)
 val SoftDarkGreen = Color(103, 137, 113)
 val DarkNavyBlue = Color(0, 4, 53)
 val Darkcian = Color(27, 71, 99)
-val Cian = Color(59, 130, 246)
+val Cian = Color(115, 145, 246, 255)
 val Lightcian = Color(135, 176, 201)
 val Softcian = Color(55, 106, 139)
 val Darkgrey = Color(45, 45, 45)
@@ -38,3 +38,12 @@ val Yellow = Color(255, 204, 0)
 val DuckYellow = Color(255, 173, 0)
 val SemiBlack = Color(18, 18, 18)
 val Black = Color(0, 0, 0)
+
+//Escala de grises//
+val PureWhite = Color(0xFFFFFFFF)//Utilizado para contrastar fondos de gris claro
+val LightGray = Color(0xFFC4C4C4)//Utilizado en titulos o texto
+val DarkGray = Color(0xFF2D2D2D)//Utilizado para el fondo
+val DarkedGray = Color(0XFF121212)
+val PureBlack = Color(0xFF000000)//Utilizado para bordes y enfatizar contraste
+
+//Aceptar

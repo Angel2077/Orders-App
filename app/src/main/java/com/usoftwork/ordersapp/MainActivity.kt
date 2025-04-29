@@ -2,6 +2,7 @@ package com.usoftwork.ordersapp
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -13,8 +14,11 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,30 +33,48 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.activity.ComponentActivity
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.usoftwork.ordersapp.ui.screens.MenuBar
+import com.usoftwork.ordersapp.ui.theme.DarkModeButton
 import com.usoftwork.ordersapp.ui.theme.DarkNavyBlue
 import com.usoftwork.ordersapp.ui.theme.DarkRed
+import com.usoftwork.ordersapp.ui.theme.OrdersAppTheme
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
+import com.usoftwork.ordersapp.R
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            // Move the NavHost and its content here, inside setContent
-            val navController = rememberNavController()
-
-            NavHost(navController = navController, startDestination = Routes.LOGIN) {
-                composable(Routes.LOGIN) { Login(navController) }
-                composable(Routes.REGISTER) { Register(navController) }
-                composable(Routes.HOME) { MenuBar(navController) }
+            OrdersAppTheme {
+                val navController = rememberNavController()
+                Scaffold(
+                    topBar = {
+                        TopAppBar(
+                            title = { },
+                            actions = {
+                                DarkModeButton()
+                            }
+                        )
+                    }
+                ) { innerPadding ->  // <-- Necesitas capturar el padding
+                    NavHost(
+                        navController = navController,
+                        startDestination = Routes.LOGIN,
+                        modifier = Modifier.padding(innerPadding) // <-- Usar el padding para evitar solapamiento
+                    ) {
+                        composable(Routes.LOGIN) { Login(navController) }
+                        composable(Routes.REGISTER) { Register(navController) }
+                        composable(Routes.HOME) { MenuBar(navController) }
+                    }
+                }
             }
         }
     }
@@ -61,7 +83,7 @@ class MainActivity : ComponentActivity() {
 @Composable
     fun Login(navController: NavHostController) {
         val focusManager = LocalFocusManager.current
-        var Correo by remember { mutableStateOf("") }
+        var correo by remember { mutableStateOf("") }
         var contrasenna by remember { mutableStateOf("") }
         var error by remember { mutableStateOf("") }
 
@@ -76,8 +98,8 @@ class MainActivity : ComponentActivity() {
                 contentDescription = "Logo de la aplicación"
             )
             OutlinedTextField(
-                value = Correo,
-                onValueChange = { Correo = it },
+                value = correo,
+                onValueChange = { correo = it },
                 label = { Text("Ingrese su correo") },
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
                 keyboardActions = KeyboardActions(
@@ -94,10 +116,10 @@ class MainActivity : ComponentActivity() {
                 keyboardActions = KeyboardActions(
                     onDone = {
                         focusManager.clearFocus()
-                        if (Correo.isEmpty() || contrasenna.isEmpty()) {
+                        if (correo.isEmpty() || contrasenna.isEmpty()) {
                             error = "Por favor, complete todos los campos."
                         } else {
-                            validarCredencialesAsync(Correo, contrasenna) { isValid ->
+                            validarCredencialesAsync(correo, contrasenna) { isValid ->
                                 if (isValid) {
                                     navController.navigate(Routes.HOME)
                                 } else {
@@ -112,10 +134,10 @@ class MainActivity : ComponentActivity() {
             Button(
                 colors = ButtonDefaults.buttonColors(DarkRed),
                 onClick = {
-                    if (Correo.isEmpty() || contrasenna.isEmpty()) {
+                    if (correo.isEmpty() || contrasenna.isEmpty()) {
                         error = "Por favor, complete todos los campos."
                     } else {
-                        validarCredencialesAsync(Correo, contrasenna) { isValid ->
+                        validarCredencialesAsync(correo, contrasenna) { isValid ->
                             if (isValid) {
                                 navController.navigate(Routes.HOME)
                             } else {
@@ -145,7 +167,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun Register(navController: NavHostController) {
         val focusManager = LocalFocusManager.current
-        var Correo by remember { mutableStateOf("") }
+        var correo by remember { mutableStateOf("") }
         var contrasenna by remember { mutableStateOf("") }
         var confirmarContrasenna by remember { mutableStateOf("") }
         var error by remember { mutableStateOf("") }
@@ -163,8 +185,8 @@ class MainActivity : ComponentActivity() {
 
 
             OutlinedTextField(
-                value = Correo,
-                onValueChange = { Correo = it },
+                value = correo,
+                onValueChange = { correo = it },
                 label = { Text("Ingrese su Correo") },
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
                 keyboardActions = KeyboardActions(
@@ -192,7 +214,7 @@ class MainActivity : ComponentActivity() {
                 keyboardActions = KeyboardActions(
                     onDone = {
                         focusManager.clearFocus()
-                        if (Correo.isEmpty() || contrasenna.isEmpty() || confirmarContrasenna.isEmpty()) {
+                        if (correo.isEmpty() || contrasenna.isEmpty() || confirmarContrasenna.isEmpty()) {
                             error = "Por favor, complete todos los campos."
                         } else if (contrasenna != confirmarContrasenna) {
                             error = "Las contraseñas no coinciden."
@@ -207,7 +229,7 @@ class MainActivity : ComponentActivity() {
             Button(
                 colors = ButtonDefaults.buttonColors(DarkNavyBlue),
                 onClick = {
-                    if (Correo.isEmpty() || contrasenna.isEmpty() || confirmarContrasenna.isEmpty()) {
+                    if (correo.isEmpty() || contrasenna.isEmpty() || confirmarContrasenna.isEmpty()) {
                         error = "Por favor, complete todos los campos."
                     } else if (contrasenna != confirmarContrasenna) {
                         error = "Las contraseñas no coinciden."
