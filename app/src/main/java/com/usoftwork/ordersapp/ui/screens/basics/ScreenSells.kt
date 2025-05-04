@@ -4,7 +4,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -14,6 +24,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 
 @Composable
 fun SalesAnalysisScreen() {
@@ -131,6 +143,67 @@ fun SalesAnalysisScreen() {
 @Preview(showBackground = true)
 @Composable
 fun SalesAnalysisScreenPreview() {
-    SalesAnalysisScreen()
+    Box(modifier = Modifier.fillMaxSize()){
+      Column {
+          SalesAnalysisScreen()
+      }
+
+        NavBar()
+    }
 }
 
+@Preview
+@Composable
+fun NavigationBarPreview() {
+    NavBar()
+}
+
+
+@Composable
+fun NavBar() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter){
+
+        NavigationBar(
+            modifier = Modifier
+                .fillMaxWidth(),
+            containerColor = Color(0xFFBF8080), // Color rosado
+            tonalElevation = NavigationBarDefaults.Elevation
+        ) {
+            // Botón 1: Home
+        NavigationBarItem(
+            icon = { Icon(Icons.Default.Favorite, contentDescription = "Home") },
+            label = { Text("Crear Platillo") },
+            selected = false, // Simula que está seleccionado
+            onClick = { /* Sin acción aún */ }
+        )
+
+        // Botón 2: Search
+        NavigationBarItem(
+            icon = { Icon(Icons.Default.Info, contentDescription = "Buscar") },
+            label = { Text("Analisis de venta") },
+            selected = true,
+            onClick = { /* Sin acción */ }
+        )
+
+        // Botón 3: Profile
+        NavigationBarItem(
+            icon = { Icon(Icons.Default.DateRange, contentDescription = "Perfil") },
+            label = { Text("Almacen") },
+            selected = false,
+            onClick = { /* Sin acción */ }
+        )
+        NavigationBarItem(
+            icon = { Icon(Icons.Default.ShoppingCart, contentDescription = "Perfil") },
+            label = { Text("Listado Pedidos") },
+            selected = false,
+            onClick = { /* Sin acción */ }
+        )
+        NavigationBarItem(
+            icon = { Icon(Icons.Default.Create, contentDescription = "Perfil") },
+            label = { Text("Tomar Pedido") },
+            selected = false,
+            onClick = { /* Sin acción */ }
+        )
+        }
+    }
+}

@@ -22,6 +22,11 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,6 +35,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarDefaults
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -154,9 +163,8 @@ fun Boton(text:String,
     }
 }
 
-@Preview(showSystemUi = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun VistaPrevia() {
+fun VistaFunciones() {
 
         Box(
             modifier = Modifier
@@ -202,7 +210,7 @@ fun VistaPrevia() {
                     ,textColor = MaterialTheme.colorScheme.onSecondary
                 )
                 Spacer(Modifier.height(10.dp))
-                Row {
+                Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
                     Boton(text = "1",
                         textColor = MaterialTheme.colorScheme.onPrimaryContainer,
                         onClick = {})
@@ -224,3 +232,9 @@ fun VistaPrevia() {
 
 
     }
+
+@Preview
+@Composable
+fun Pagina(){
+VistaFunciones()
+}
