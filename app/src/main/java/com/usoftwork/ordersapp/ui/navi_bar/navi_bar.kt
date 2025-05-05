@@ -33,7 +33,7 @@ fun NavBar(
     if (isVisible) {
         NavigationBar(
             modifier = Modifier.fillMaxWidth(),
-            containerColor = Color(0XFFBF8080)
+            containerColor = Color(0XFFFB8B8B)
         ) {
             navItems.forEach { (icon, text, id) ->
                 NavigationBarItem(

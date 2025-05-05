@@ -1,4 +1,4 @@
-package com.usoftwork.ordersapp.ui.screens.basics
+package com.usoftwork.ordersapp.ui.screens.useful
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
