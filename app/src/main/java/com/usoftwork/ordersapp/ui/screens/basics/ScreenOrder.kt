@@ -41,6 +41,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.usoftwork.ordersapp.ui.navi_bar.NavBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -234,7 +235,19 @@ fun VistaFunciones() {
     }
 
 @Preview
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Pagina(){
-VistaFunciones()
+    val naviItems = listOf("create_dish","sales","storage","orders" ,"take_order")
+    Scaffold(
+        bottomBar = {
+        NavBar(
+            isVisible = true,
+            selectedItem = naviItems[4],
+            onItemClick = {} // Use the correct index for "take_order"
+        )
+}
+    ){padding ->
+        VistaFunciones()
+    }
 }

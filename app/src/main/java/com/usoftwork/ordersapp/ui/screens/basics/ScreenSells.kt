@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import com.usoftwork.ordersapp.ui.navi_bar.NavBar
 
 @Composable
 fun SalesAnalysisScreen() {
@@ -140,70 +141,25 @@ fun SalesAnalysisScreen() {
 }
 
 
-@Preview(showBackground = true)
+
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun SalesAnalysisScreenPreview() {
-    Box(modifier = Modifier.fillMaxSize()){
-      Column {
-          SalesAnalysisScreen()
-      }
-
-        NavBar()
-    }
-}
-
-@Preview
-@Composable
-fun NavigationBarPreview() {
-    NavBar()
-}
-
-
-@Composable
-fun NavBar() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter){
-
-        NavigationBar(
-            modifier = Modifier
-                .fillMaxWidth(),
-            containerColor = Color(0xFFBF8080), // Color rosado
-            tonalElevation = NavigationBarDefaults.Elevation
-        ) {
-            // Botón 1: Home
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.Favorite, contentDescription = "Home") },
-            label = { Text("Crear Platillo") },
-            selected = false, // Simula que está seleccionado
-            onClick = { /* Sin acción aún */ }
-        )
-
-        // Botón 2: Search
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.Info, contentDescription = "Buscar") },
-            label = { Text("Analisis de venta") },
-            selected = true,
-            onClick = { /* Sin acción */ }
-        )
-
-        // Botón 3: Profile
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.DateRange, contentDescription = "Perfil") },
-            label = { Text("Almacen") },
-            selected = false,
-            onClick = { /* Sin acción */ }
-        )
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.ShoppingCart, contentDescription = "Perfil") },
-            label = { Text("Listado Pedidos") },
-            selected = false,
-            onClick = { /* Sin acción */ }
-        )
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.Create, contentDescription = "Perfil") },
-            label = { Text("Tomar Pedido") },
-            selected = false,
-            onClick = { /* Sin acción */ }
-        )
+    fun PaginaSales(){
+        Column {
+            val naviItems = listOf("create_dish","sales","storage","orders" ,"take_order")
+            Scaffold(
+                bottomBar = {
+                    NavBar(
+                        isVisible = true,
+                        selectedItem = naviItems[1],
+                        onItemClick = {} // Use the correct index for "take_order"
+                    )
+                }
+            ){padding ->
+                SalesAnalysisScreen()
+            }
         }
     }
-}
+
+
+
