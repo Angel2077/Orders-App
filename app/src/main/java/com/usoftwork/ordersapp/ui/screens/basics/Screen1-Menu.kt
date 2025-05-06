@@ -56,6 +56,7 @@ fun Rectangulo(width: Dp = 200.dp, height: Dp = 50.dp) {
         Box(
             modifier = Modifier
                 .size(width, height)
+
                 .background(color = Color(0xFFFB8B8B), RoundedCornerShape(20.dp))
         )
     }

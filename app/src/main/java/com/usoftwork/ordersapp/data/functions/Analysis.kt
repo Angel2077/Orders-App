@@ -34,7 +34,6 @@ fun SalesAnalysis(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF2B2B2B))
             .padding(16.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {

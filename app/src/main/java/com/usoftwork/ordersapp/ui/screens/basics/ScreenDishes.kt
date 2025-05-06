@@ -18,15 +18,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.usoftwork.ordersapp.ui.navi_bar.NavBar
+import com.usoftwork.ordersapp.ui.theme.*
 
 @Composable
-fun ProductosScreen() {
+fun ProductosScreen(padding: PaddingValues) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFF1C1C1C))
-            .padding(16.dp)
-    ) {
+            .padding(padding) // usa padding del Scaffold
+            .padding(16.dp)   // padding interno adicional
+    ){
         Text(
             text = "Productos",
             fontSize = 24.sp,
@@ -74,7 +76,7 @@ fun ProductosScreen() {
 
         Button(
             onClick = {},
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF8C8C)),
+            colors = ButtonDefaults.buttonColors(containerColor = Salmon),
             modifier = Modifier.fillMaxWidth()
         ) {
             Icon(Icons.Default.Delete, contentDescription = "Eliminar")
@@ -87,7 +89,7 @@ fun ProductoCard(title: String, isFirst: Boolean = false) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0xFFFF8C8C), shape = MaterialTheme.shapes.medium)
+            .background(Salmon, shape = MaterialTheme.shapes.medium)
             .padding(12.dp)
     ) {
         Row(
@@ -136,8 +138,8 @@ fun PreviewProductos() {
                     onItemClick = {} // Use the correct index for "take_order"
                 )
             }
-        ){padding ->
-            ProductosScreen()
+        ){ padding ->
+            ProductosScreen(padding = padding) // pasa el padding aquí
         }
     }
 }

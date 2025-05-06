@@ -37,14 +37,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.usoftwork.ordersapp.data.classes.Create_Pedido
-import com.usoftwork.ordersapp.data.functions.SalesAnalysis
-import com.usoftwork.ordersapp.data.classes.ListadoPedido
-import com.usoftwork.ordersapp.ui.screens.MenuBar
+import com.usoftwork.ordersapp.data.classes.*
+import com.usoftwork.ordersapp.data.functions.*
+import com.usoftwork.ordersapp.ui.screens.*
 import com.usoftwork.ordersapp.ui.theme.DarkModeButton
-import com.usoftwork.ordersapp.ui.theme.DarkNavyBlue
-import com.usoftwork.ordersapp.ui.theme.DarkRed
-import com.usoftwork.ordersapp.ui.theme.OrdersAppTheme
+import com.usoftwork.ordersapp.ui.theme.*
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
@@ -75,8 +72,8 @@ class MainActivity : ComponentActivity() {
                         composable(Routes.LOGIN) { Login(navController) }
                         composable(Routes.REGISTER) { Register(navController) }
                         composable(Routes.HOME) { MenuBar(navController) }
-                        composable(Routes.ARMAR) { Create_Pedido(navController) }
-                        composable(Routes.LISTAR) { ListadoPedido(navController) }
+                        composable(Routes.ARMAR) { CreatePedido() }
+                        composable(Routes.LISTAR) { ListadoPedido() }
                         composable(Routes.ANALYSIS) { SalesAnalysis(navController) }
 
                     }
@@ -85,6 +82,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 
 @Composable
     fun Login(navController: NavHostController) {
@@ -264,12 +262,12 @@ class MainActivity : ComponentActivity() {
 
 
     fun validarCredencialesAsync(
-        Correo: String,
+        correo: String,
         contrasenna: String,
         onResult: (Boolean) -> Unit
     ) {
         Thread {
-            val isValid = validarCredenciales(Correo, contrasenna)
+            val isValid = validarCredenciales(correo, contrasenna)
             Handler(Looper.getMainLooper()).post {
                 onResult(isValid)
             }
@@ -277,13 +275,13 @@ class MainActivity : ComponentActivity() {
     }
 
 
-    fun validarCredenciales(Correo: String, contrasenna: String): Boolean {
+    fun validarCredenciales(correo: String, contrasenna: String): Boolean {
         var connection: Connection? = null
         return try {
             connection = MySQLConnector.getConnection()
             val query = "SELECT * FROM usuarios WHERE correo = ? AND contrasenna = ?"
             val preparedStatement = connection.prepareStatement(query)
-            preparedStatement.setString(1, Correo)
+            preparedStatement.setString(1, correo)
             preparedStatement.setString(2, contrasenna)
 
             val resultSet = preparedStatement.executeQuery()
