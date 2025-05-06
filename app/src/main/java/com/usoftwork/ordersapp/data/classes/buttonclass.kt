@@ -2,6 +2,7 @@ package com.usoftwork.ordersapp.data.classes
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -36,12 +37,14 @@ fun CustomButton(
     icon: Any? = null,
     modifier: Modifier = Modifier,
     height: Dp = Unspecified,
+    weight: Float = 1f,
     fontSize: TextUnit = 20.sp,
     fontWeight: FontWeight = FontWeight.Normal,
     cornerRadius: Dp = 6.dp,
     containerColor: Color = Salmon,
     contentColor: Color = Dustwhite,
-    iconSize: Dp = 60.dp
+    iconSize: Dp = 60.dp,
+    center: Boolean = false
 ) {
     Button(
         onClick = onClick,
@@ -57,7 +60,11 @@ fun CustomButton(
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = when {
+                center && icon == null -> Arrangement.Center
+                icon != null -> Arrangement.SpaceBetween
+                else -> Arrangement.Start
+            },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(

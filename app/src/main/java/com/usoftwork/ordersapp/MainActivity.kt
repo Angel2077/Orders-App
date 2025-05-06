@@ -1,19 +1,23 @@
 package com.usoftwork.ordersapp
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -27,24 +31,28 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.usoftwork.ordersapp.data.classes.*
-import com.usoftwork.ordersapp.data.functions.*
+import com.usoftwork.ordersapp.data.classes.CreatePedido
+import com.usoftwork.ordersapp.data.classes.CustomButton
+import com.usoftwork.ordersapp.data.classes.ListadoPedido
+import com.usoftwork.ordersapp.data.functions.SalesAnalysis
 import com.usoftwork.ordersapp.ui.screens.*
-import com.usoftwork.ordersapp.ui.theme.DarkModeButton
 import com.usoftwork.ordersapp.ui.theme.*
+import com.usoftwork.ordersapp.ui.theme.OrdersAppTheme
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
+import java.time.format.TextStyle
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -84,60 +92,43 @@ class MainActivity : ComponentActivity() {
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
     fun Login(navController: NavHostController) {
-        val focusManager = LocalFocusManager.current
-        var correo by remember { mutableStateOf("") }
-        var contrasenna by remember { mutableStateOf("") }
-        var error by remember { mutableStateOf("") }
+    val focusManager = LocalFocusManager.current
+    var correo by remember { mutableStateOf("") }
+    var contrasenna by remember { mutableStateOf("") }
+    var error by remember { mutableStateOf("") }
 
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Image(
-                modifier = Modifier.size(200.dp),
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = "Logo de la aplicación"
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            modifier = Modifier.size(200.dp),
+            painter = painterResource(id = R.drawable.logo),
+            contentDescription = "Logo de la aplicación"
+        )
+        OutlinedTextField(
+            value = correo,
+            onValueChange = { correo = it },
+            label = { Text("Ingrese su correo") },
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(
+                onNext = { focusManager.moveFocus(FocusDirection.Down) }
             )
-            OutlinedTextField(
-                value = correo,
-                onValueChange = { correo = it },
-                label = { Text("Ingrese su correo") },
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
-                )
-            )
+        )
 
-            OutlinedTextField(
-                value = contrasenna,
-                onValueChange = { contrasenna = it },
-                label = { Text("Ingrese Contraseña") },
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        focusManager.clearFocus()
-                        if (correo.isEmpty() || contrasenna.isEmpty()) {
-                            error = "Por favor, complete todos los campos."
-                        } else {
-                            validarCredencialesAsync(correo, contrasenna) { isValid ->
-                                if (isValid) {
-                                    navController.navigate(Routes.HOME)
-                                } else {
-                                    error = "Credenciales incorrectas."
-                                }
-                            }
-                        }
-                    }
-                )
-            )
-
-            Button(
-                colors = ButtonDefaults.buttonColors(DarkRed),
-                onClick = {
+        OutlinedTextField(
+            value = contrasenna,
+            onValueChange = { contrasenna = it },
+            label = { Text("Ingrese Contraseña") },
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    focusManager.clearFocus()
                     if (correo.isEmpty() || contrasenna.isEmpty()) {
                         error = "Por favor, complete todos los campos."
                     } else {
@@ -149,24 +140,55 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     }
-                },
-                modifier = Modifier.padding(top = 16.dp)
-            ) {
-                Text(text = "Ingresar")
-            }
+                }
+            )
+        )
 
-            Button(
-                onClick = { navController.navigate(Routes.REGISTER) },
-                modifier = Modifier.padding(top = 8.dp)
-            ) {
-                Text("Registrarse")
-            }
+        CustomButton(
+            text = "Ingresar",
+            contentColor = White,
+            modifier = Modifier.width(310.dp),
+            center = true,
+            onClick = {
+                if (correo.isEmpty() || contrasenna.isEmpty()) {
+                    error = "Por favor, complete todos los campos."
+                } else {
+                    validarCredencialesAsync(correo, contrasenna) { isValid ->
+                        if (isValid) {
+                            navController.navigate(Routes.HOME)
+                        } else {
+                            error = "Credenciales incorrectas."
+                        }
+                    }
+                }
+            },
+            containerColor = DarkRed // si quieres mantener ese color
+        )
+        Text(
+            text = "O",
+            color = grey,
+            fontSize  = 10.sp)
+        CustomButton(
+            text = "Registrarse",
+            contentColor = White,
+            modifier = Modifier.width(310.dp),
+            center = true,
+            onClick = { navController.navigate(Routes.REGISTER) },
+            containerColor = DarkNavyBlue
+        )
+        Text(
+            text = "¿Olvidó su contraseña?",
+            color = grey,
+            fontSize = 16.sp,
+            modifier = Modifier.clickable {
 
-            if (error.isNotEmpty()) {
-                Text(text = error, color = Color.Red, modifier = Modifier.padding(top = 8.dp))
-            }
-        }
+                navController.navigate(Routes.REGISTER)
+            },
+        )
+
     }
+}
+
 
     @Composable
     fun Register(navController: NavHostController) {
@@ -230,33 +252,28 @@ class MainActivity : ComponentActivity() {
                 )
             )
 
-            Button(
-                colors = ButtonDefaults.buttonColors(DarkNavyBlue),
+            CustomButton(
+                text = "Registrar",
+                contentColor = White,
+                modifier = Modifier.width(310.dp),
                 onClick = {
                     if (correo.isEmpty() || contrasenna.isEmpty() || confirmarContrasenna.isEmpty()) {
                         error = "Por favor, complete todos los campos."
                     } else if (contrasenna != confirmarContrasenna) {
                         error = "Las contraseñas no coinciden."
                     } else {
-                        // Aquí puedes agregar la lógica para registrar al usuario
-                        navController.navigate(Routes.HOME) // Cambiar ruta según sea necesario
+                        navController.navigate(Routes.HOME)
                     }
                 },
-                modifier = Modifier.padding(top = 16.dp)
-            ) {
-                Text(text = "Registrar")
-            }
-
-            Button(
+                containerColor = DarkRed
+            )
+            CustomButton(
+                text = "Volver a Iniciar Sesión",
+                contentColor = White,
+                modifier = Modifier.width(310.dp),
                 onClick = { navController.navigate(Routes.LOGIN) },
-                modifier = Modifier.padding(top = 8.dp)
-            ) {
-                Text("Volver a Iniciar Sesión")
-            }
-
-            if (error.isNotEmpty()) {
-                Text(text = error, color = Color.Red, modifier = Modifier.padding(top = 8.dp))
-            }
+                containerColor = DarkNavyBlue
+            )
         }
     }
 
