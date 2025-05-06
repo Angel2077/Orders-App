@@ -1,4 +1,5 @@
 package com.usoftwork.ordersapp
+
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -45,6 +46,7 @@ import com.usoftwork.ordersapp.ui.theme.DarkModeButton
 import com.usoftwork.ordersapp.ui.theme.DarkNavyBlue
 import com.usoftwork.ordersapp.ui.theme.DarkRed
 import com.usoftwork.ordersapp.ui.theme.OrdersAppTheme
+import conexiondb.DatabaseConnector
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
@@ -87,59 +89,41 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-    fun Login(navController: NavHostController) {
-        val focusManager = LocalFocusManager.current
-        var correo by remember { mutableStateOf("") }
-        var contrasenna by remember { mutableStateOf("") }
-        var error by remember { mutableStateOf("") }
+fun Login(navController: NavHostController) {
+    val focusManager = LocalFocusManager.current
+    var correo by remember { mutableStateOf("") }
+    var contrasenna by remember { mutableStateOf("") }
+    var error by remember { mutableStateOf("") }
 
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Image(
-                modifier = Modifier.size(200.dp),
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = "Logo de la aplicación"
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            modifier = Modifier.size(200.dp),
+            painter = painterResource(id = R.drawable.logo),
+            contentDescription = "Logo de la aplicación"
+        )
+        OutlinedTextField(
+            value = correo,
+            onValueChange = { correo = it },
+            label = { Text("Ingrese su correo") },
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(
+                onNext = { focusManager.moveFocus(FocusDirection.Down) }
             )
-            OutlinedTextField(
-                value = correo,
-                onValueChange = { correo = it },
-                label = { Text("Ingrese su correo") },
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
-                )
-            )
+        )
 
-            OutlinedTextField(
-                value = contrasenna,
-                onValueChange = { contrasenna = it },
-                label = { Text("Ingrese Contraseña") },
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        focusManager.clearFocus()
-                        if (correo.isEmpty() || contrasenna.isEmpty()) {
-                            error = "Por favor, complete todos los campos."
-                        } else {
-                            validarCredencialesAsync(correo, contrasenna) { isValid ->
-                                if (isValid) {
-                                    navController.navigate(Routes.HOME)
-                                } else {
-                                    error = "Credenciales incorrectas."
-                                }
-                            }
-                        }
-                    }
-                )
-            )
-
-            Button(
-                colors = ButtonDefaults.buttonColors(DarkRed),
-                onClick = {
+        OutlinedTextField(
+            value = contrasenna,
+            onValueChange = { contrasenna = it },
+            label = { Text("Ingrese Contraseña") },
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    focusManager.clearFocus()
                     if (correo.isEmpty() || contrasenna.isEmpty()) {
                         error = "Por favor, complete todos los campos."
                     } else {
@@ -151,90 +135,93 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     }
-                },
-                modifier = Modifier.padding(top = 16.dp)
-            ) {
-                Text(text = "Ingresar")
-            }
-
-            Button(
-                onClick = { navController.navigate(Routes.REGISTER) },
-                modifier = Modifier.padding(top = 8.dp)
-            ) {
-                Text("Registrarse")
-            }
-
-            if (error.isNotEmpty()) {
-                Text(text = error, color = Color.Red, modifier = Modifier.padding(top = 8.dp))
-            }
-        }
-    }
-
-    @Composable
-    fun Register(navController: NavHostController) {
-        val focusManager = LocalFocusManager.current
-        var correo by remember { mutableStateOf("") }
-        var contrasenna by remember { mutableStateOf("") }
-        var confirmarContrasenna by remember { mutableStateOf("") }
-        var error by remember { mutableStateOf("") }
-
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Image(
-                modifier = Modifier.size(200.dp),
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = "Logo de la aplicación"
+                }
             )
+        )
 
-
-            OutlinedTextField(
-                value = correo,
-                onValueChange = { correo = it },
-                label = { Text("Ingrese su Correo") },
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
-                )
-            )
-
-            OutlinedTextField(
-                value = contrasenna,
-                onValueChange = { contrasenna = it },
-                label = { Text("Ingrese Contraseña") },
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
-                )
-            )
-
-            OutlinedTextField(
-                value = confirmarContrasenna,
-                onValueChange = { confirmarContrasenna = it },
-                label = { Text("Confirme Contraseña") },
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        focusManager.clearFocus()
-                        if (correo.isEmpty() || contrasenna.isEmpty() || confirmarContrasenna.isEmpty()) {
-                            error = "Por favor, complete todos los campos."
-                        } else if (contrasenna != confirmarContrasenna) {
-                            error = "Las contraseñas no coinciden."
+        Button(
+            colors = ButtonDefaults.buttonColors(DarkRed),
+            onClick = {
+                if (correo.isEmpty() || contrasenna.isEmpty()) {
+                    error = "Por favor, complete todos los campos."
+                } else {
+                    validarCredencialesAsync(correo, contrasenna) { isValid ->
+                        if (isValid) {
+                            navController.navigate(Routes.HOME)
                         } else {
-                            // Aquí puedes agregar la lógica para registrar al usuario
-                            navController.navigate(Routes.HOME) // Cambiar ruta según sea necesario
+                            error = "Credenciales incorrectas."
                         }
                     }
-                )
-            )
+                }
+            },
+            modifier = Modifier.padding(top = 16.dp)
+        ) {
+            Text(text = "Ingresar")
+        }
 
-            Button(
-                colors = ButtonDefaults.buttonColors(DarkNavyBlue),
-                onClick = {
+        Button(
+            onClick = { navController.navigate(Routes.REGISTER) },
+            modifier = Modifier.padding(top = 8.dp)
+        ) {
+            Text("Registrarse")
+        }
+
+        if (error.isNotEmpty()) {
+            Text(text = error, color = Color.Red, modifier = Modifier.padding(top = 8.dp))
+        }
+    }
+}
+
+@Composable
+fun Register(navController: NavHostController) {
+    val focusManager = LocalFocusManager.current
+    var correo by remember { mutableStateOf("") }
+    var contrasenna by remember { mutableStateOf("") }
+    var confirmarContrasenna by remember { mutableStateOf("") }
+    var error by remember { mutableStateOf("") }
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            modifier = Modifier.size(200.dp),
+            painter = painterResource(id = R.drawable.logo),
+            contentDescription = "Logo de la aplicación"
+        )
+
+
+        OutlinedTextField(
+            value = correo,
+            onValueChange = { correo = it },
+            label = { Text("Ingrese su Correo") },
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(
+                onNext = { focusManager.moveFocus(FocusDirection.Down) }
+            )
+        )
+
+        OutlinedTextField(
+            value = contrasenna,
+            onValueChange = { contrasenna = it },
+            label = { Text("Ingrese Contraseña") },
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(
+                onNext = { focusManager.moveFocus(FocusDirection.Down) }
+            )
+        )
+
+        OutlinedTextField(
+            value = confirmarContrasenna,
+            onValueChange = { confirmarContrasenna = it },
+            label = { Text("Confirme Contraseña") },
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    focusManager.clearFocus()
                     if (correo.isEmpty() || contrasenna.isEmpty() || confirmarContrasenna.isEmpty()) {
                         error = "Por favor, complete todos los campos."
                     } else if (contrasenna != confirmarContrasenna) {
@@ -243,86 +230,73 @@ class MainActivity : ComponentActivity() {
                         // Aquí puedes agregar la lógica para registrar al usuario
                         navController.navigate(Routes.HOME) // Cambiar ruta según sea necesario
                     }
-                },
-                modifier = Modifier.padding(top = 16.dp)
-            ) {
-                Text(text = "Registrar")
-            }
+                }
+            )
+        )
 
-            Button(
-                onClick = { navController.navigate(Routes.LOGIN) },
-                modifier = Modifier.padding(top = 8.dp)
-            ) {
-                Text("Volver a Iniciar Sesión")
-            }
+        Button(
+            colors = ButtonDefaults.buttonColors(DarkNavyBlue),
+            onClick = {
+                if (correo.isEmpty() || contrasenna.isEmpty() || confirmarContrasenna.isEmpty()) {
+                    error = "Por favor, complete todos los campos."
+                } else if (contrasenna != confirmarContrasenna) {
+                    error = "Las contraseñas no coinciden."
+                } else {
+                    // Aquí puedes agregar la lógica para registrar al usuario
+                    navController.navigate(Routes.HOME) // Cambiar ruta según sea necesario
+                }
+            },
+            modifier = Modifier.padding(top = 16.dp)
+        ) {
+            Text(text = "Registrar")
+        }
 
-            if (error.isNotEmpty()) {
-                Text(text = error, color = Color.Red, modifier = Modifier.padding(top = 8.dp))
-            }
+        Button(
+            onClick = { navController.navigate(Routes.LOGIN) },
+            modifier = Modifier.padding(top = 8.dp)
+        ) {
+            Text("Volver a Iniciar Sesión")
+        }
+
+        if (error.isNotEmpty()) {
+            Text(text = error, color = Color.Red, modifier = Modifier.padding(top = 8.dp))
         }
     }
+}
 
 
-    fun validarCredencialesAsync(
-        Correo: String,
+fun validarCredencialesAsync(
+        correo: String,
         contrasenna: String,
         onResult: (Boolean) -> Unit
     ) {
-        Thread {
-            val isValid = validarCredenciales(Correo, contrasenna)
-            Handler(Looper.getMainLooper()).post {
-                onResult(isValid)
-            }
-        }.start()
-    }
-
-
-    fun validarCredenciales(Correo: String, contrasenna: String): Boolean {
-        var connection: Connection? = null
-        return try {
-            connection = MySQLConnector.getConnection()
-            val query = "SELECT * FROM usuarios WHERE correo = ? AND contrasenna = ?"
-            val preparedStatement = connection.prepareStatement(query)
-            preparedStatement.setString(1, Correo)
-            preparedStatement.setString(2, contrasenna)
-
-            val resultSet = preparedStatement.executeQuery()
-            resultSet.next()
-        } catch (e: SQLException) {
-            e.printStackTrace()
-            false
-        } finally {
-            connection?.close()
+    Thread {
+        val isValid = validarCredenciales(correo, contrasenna)
+        Handler(Looper.getMainLooper()).post {
+            onResult(isValid)
         }
-    }
+    }.start()
+}
 
-    object MySQLConnector {
-        private const val JDBC_URL = "jdbc:mysql://dbucm.cl:3306/cdb105948/proyecto"
-        private const val USER = "cdb105948_sebastian"
-        private const val ALT_USER = "cdb105948_estudiantes"
-        private const val PASS = "contrasena2024"
 
-        init {
-            try {
-                Class.forName("com.mysql.cj.jdbc.Driver")
-            } catch (e: ClassNotFoundException) {
-                e.printStackTrace()
-            }
-        }
+fun validarCredenciales(correo: String, contrasenna: String): Boolean {
+    val database = DatabaseConnector()
+    /*
+            integrar 2 nuevos campos:
+            1) la ip/dns de la base de datos (si es que este puede cambiar al paso del tiempo)
+            2) el nombre de la base de datos
+         */
+    val res = database.setConnection("", "test", correo, contrasenna)
+    return res
+}
 
-        @Throws(SQLException::class)
-        fun getConnection(useAltUser: Boolean = false): Connection {
-            val user = if (useAltUser) ALT_USER else USER
-            return DriverManager.getConnection(JDBC_URL, user, PASS)
-        }
-    }
 
-    object Routes {
-        const val LOGIN = "login"
-        const val REGISTER = "register"
-        const val HOME = "home"
-        const val ARMAR = "armar"
-        const val LISTAR = "listar"
-        const val ANALYSIS = "analizar"
-    }
+object Routes {
+    const val LOGIN = "login"
+    const val REGISTER = "register"
+    const val HOME = "home"
+    const val ARMAR = "armar"
+    const val LISTAR = "listar"
+    const val ANALYSIS = "analizar"
+}
 
