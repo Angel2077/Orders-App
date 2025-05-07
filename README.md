@@ -1,2 +1,2 @@
 # Orders-App
-Aplicacion de pedidos local con coneccion a un servidor
+Aplicacion de pedidos local con conexion a un servidor
