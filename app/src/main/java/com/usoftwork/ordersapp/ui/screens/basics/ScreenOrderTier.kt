@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.usoftwork.ordersapp.ui.navi_bar.NavBar
+import com.usoftwork.ordersapp.ui.theme.Salmon
 
 @Composable
 fun ListadoPedidoScreen() {
@@ -102,7 +103,7 @@ fun ListadoPedidoScreen() {
 
                 Divider(color = Color.Gray, thickness = 1.dp)
                 Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.padding(top = 4.dp))
-//No se
+
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Row(
@@ -155,32 +156,6 @@ fun ListadoPedidoScreen() {
 
         Spacer(modifier = Modifier.height(260.dp))
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color(0xFFFF8A8A)),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            repeat(5) { _ ->
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "Settings",
-                    tint = Color.White,
-                    modifier = Modifier
-                        .size(50.dp)
-                        .background(Color.Gray, shape = RoundedCornerShape(8.dp)).padding(8.dp)
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(20.dp)
-                .background(Color(0xFFD8D8D8))
-        )
     }
 }
 

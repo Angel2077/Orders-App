@@ -72,6 +72,7 @@ fun CustomButton(
                 fontSize = fontSize,
                 fontWeight = fontWeight,
             )
+            //en caso de que exista un icono
             icon?.let {
                 when (it) {
                     is ImageVector -> Icon(
