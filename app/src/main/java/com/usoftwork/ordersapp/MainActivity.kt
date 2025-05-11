@@ -48,8 +48,8 @@ import com.usoftwork.ordersapp.data.functions.SalesAnalysis
 import com.usoftwork.ordersapp.ui.screens.*
 import com.usoftwork.ordersapp.ui.theme.*
 import com.usoftwork.ordersapp.ui.theme.OrdersAppTheme
-
 import conexiondb.DatabaseConnector
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -287,7 +287,6 @@ fun validarCredencialesAsync(
         }
     }.start()
 }
-
 
 fun validarCredenciales(correo: String, contrasenna: String): Boolean {
     val database = DatabaseConnector()
