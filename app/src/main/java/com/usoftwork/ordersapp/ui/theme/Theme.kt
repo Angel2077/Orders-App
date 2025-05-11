@@ -1,10 +1,12 @@
 package com.usoftwork.ordersapp.ui.theme
 
+
 import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -19,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.usoftwork.ordersapp.R
+
 
 // Creamos el CompositionLocal para el estado del tema
 val LocalDarkTheme = compositionLocalOf { mutableStateOf(false) }
@@ -57,7 +60,7 @@ fun OrdersAppTheme(
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val darkThemeState = remember { mutableStateOf(false) }  // Inicializamos el estado aquí
+    val darkThemeState = remember { mutableStateOf(false) }
 
     val darkTheme = darkThemeState.value
 
@@ -73,11 +76,14 @@ fun OrdersAppTheme(
     CompositionLocalProvider(LocalDarkTheme provides darkThemeState) {
         MaterialTheme(
             colorScheme = colorScheme,
-            typography = Typography,
+            typography = typography,
             content = content
         )
     }
 }
+
+
+
 
 
 @Composable

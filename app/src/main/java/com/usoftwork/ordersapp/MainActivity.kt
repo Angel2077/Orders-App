@@ -1,5 +1,6 @@
 package com.usoftwork.ordersapp
 
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -40,7 +43,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-
 import com.usoftwork.ordersapp.data.classes.CreatePedido
 import com.usoftwork.ordersapp.data.classes.CustomButton
 import com.usoftwork.ordersapp.data.classes.ListadoPedido
@@ -49,7 +51,7 @@ import com.usoftwork.ordersapp.ui.screens.*
 import com.usoftwork.ordersapp.ui.theme.*
 import com.usoftwork.ordersapp.ui.theme.OrdersAppTheme
 import conexiondb.DatabaseConnector
-
+import java.time.format.TextStyle
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -91,6 +93,7 @@ class MainActivity : ComponentActivity() {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
+
 fun Login(navController: NavHostController) {
     val focusManager = LocalFocusManager.current
     var correo by remember { mutableStateOf("") }
@@ -242,8 +245,7 @@ fun Register(navController: NavHostController) {
                     } else if (contrasenna != confirmarContrasenna) {
                         error = "Las contraseñas no coinciden."
                     } else {
-                        // Aquí puedes agregar la lógica para registrar al usuario
-                        navController.navigate(Routes.HOME) // Cambiar ruta según sea necesario
+                        navController.navigate(Routes.HOME)
                     }
                 }
             )

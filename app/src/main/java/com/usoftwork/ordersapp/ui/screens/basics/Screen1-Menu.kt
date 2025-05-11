@@ -56,6 +56,7 @@ fun Rectangulo(width: Dp = 200.dp, height: Dp = 50.dp) {
         Box(
             modifier = Modifier
                 .size(width, height)
+
                 .background(color = Color(0xFFFB8B8B), RoundedCornerShape(20.dp))
         )
     }
@@ -63,7 +64,7 @@ fun Rectangulo(width: Dp = 200.dp, height: Dp = 50.dp) {
 
 @Preview(showSystemUi = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun VistaPrevia() {
+fun ScreenMenu() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -101,3 +102,5 @@ fun VistaPrevia() {
             }
         }
     }
+
+
