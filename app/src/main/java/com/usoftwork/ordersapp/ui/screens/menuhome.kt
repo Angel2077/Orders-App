@@ -1,10 +1,11 @@
-@file:Suppress("UNREACHABLE_CODE")
-
 package com.usoftwork.ordersapp.ui.screens
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.DateRange
@@ -21,11 +22,14 @@ import com.usoftwork.ordersapp.R
 import com.usoftwork.ordersapp.data.classes.CustomButton
 
 @Composable
-fun MenuBar(navController: NavHostController) {
+fun MenuBar(navController: NavHostController, scrollState: ScrollState) {
+
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(scrollState)
             .padding(top = 32.dp),
+
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
