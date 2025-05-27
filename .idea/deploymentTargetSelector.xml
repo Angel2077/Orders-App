@@ -5,19 +5,13 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="PaginaOrderTier">
+      <SelectionState runConfigName="vistaPrevia">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="ConfiguracionScreenPreview (2)">
+      <SelectionState runConfigName="VistaPreviaLogin">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="PaginaOrderTierPreview">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="SalesAnalysisScreenPreview">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="VentasScreenPreview">
+      <SelectionState runConfigName="vistapreviaA">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
