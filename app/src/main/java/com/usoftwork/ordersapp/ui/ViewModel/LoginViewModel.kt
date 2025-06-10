@@ -1,10 +1,11 @@
-package com.example.usoftwork.data.DBLogin
+package com.usoftwork.ordersapp.ui.ViewModel
 
-import com.usoftwork.ordersapp.data.DBLogin.AppDatabase
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.room.Room
+import com.usoftwork.ordersapp.data.a1Entity.User
+import com.usoftwork.ordersapp.data.a3DataBase.AppDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -41,4 +42,3 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 }
-

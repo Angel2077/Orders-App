@@ -1,8 +1,9 @@
-package com.example.usoftwork.data.DBLogin
+package com.usoftwork.ordersapp.data.a2Dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import com.usoftwork.ordersapp.data.a1Entity.User
 
 @Dao
 interface UserDao {

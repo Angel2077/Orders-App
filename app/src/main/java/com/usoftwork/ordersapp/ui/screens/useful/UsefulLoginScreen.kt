@@ -36,12 +36,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.usoftwork.data.DBLogin.LoginViewModel
+import com.usoftwork.ordersapp.ui.ViewModel.LoginViewModel
 import com.usoftwork.ordersapp.R
 import com.usoftwork.ordersapp.Routes
 import com.usoftwork.ordersapp.data.classes.CustomButton
@@ -178,5 +179,10 @@ private fun attemptLogin(
     }
 }
 
+@Preview
+@Composable
+fun LoginScreenPreview() {
+    LoginScreen(navController = NavHostController(LocalContext.current), scrollState = rememberScrollState())
+}
 
 

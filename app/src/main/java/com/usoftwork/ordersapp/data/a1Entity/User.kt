@@ -1,4 +1,4 @@
-package com.example.usoftwork.data.DBLogin
+package com.usoftwork.ordersapp.data.a1Entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
