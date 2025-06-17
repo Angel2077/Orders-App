@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Order-apps - Inicio</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 3rem 4rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            max-width: 350px;
+            width: 90%;
+        }
+
+        h1 {
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            font-size: 2.4rem;
+            letter-spacing: 1.2px;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 0.75rem 0;
+            margin: 0.7rem 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-register {
+            background-color: #f6ad55; /* naranja suave */
+            color: #333;
+        }
+        .btn-register:hover {
+            background-color: #ed8936;
+        }
+
+        .btn-login {
+            background-color: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+        .btn-login:hover {
+            background-color: white;
+            color: #764ba2;
+            border-color: white;
+        }
+
+        @media (max-width: 400px) {
+            .container {
+                padding: 2rem 1.5rem;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bienvenido a Order-apps</h1>
+        <button class="btn btn-register" onclick="location.href='register.html'">Registrarse</button>
+        <button class="btn btn-login" onclick="location.href='login.html'">Iniciar sesión</button>
+    </div>
+</body>
+</html>

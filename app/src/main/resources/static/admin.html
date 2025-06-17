@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Panel de Administración - OrderApp</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+        /* Estilos del panel */
+        body {
+            background: #f4f7fa;
+            color: #333;
+            padding: 2rem;
+            font-family: sans-serif;
+        }
+
+        header {
+            background-color: #004085;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+
+        .container-admin {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.1);
+        }
+
+        button {
+            padding: 0.6rem 1.2rem;
+            background-color: #004085;
+            border: none;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px; /* Espacio para botones */
+            margin-right: 5px;
+        }
+
+        button:hover {
+            background-color: #002752;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        li {
+            padding: 0.5rem;
+            border-bottom: 1px solid #ccc;
+            display: flex; /* Para alinear elementos horizontalmente */
+            justify-content: space-between; /* Para separar contenido y botones */
+            align-items: center; /* Para centrar verticalmente */
+        }
+
+        .eliminar {
+            color: red;
+            cursor: pointer;
+            margin-left: 10px; /* Espacio entre editar y eliminar */
+        }
+        .editar {
+            color: #004085; /* Color similar al botón principal */
+            cursor: pointer;
+        }
+
+
+        nav {
+            text-align: right;
+            margin-bottom: 1rem;
+        }
+
+        nav button {
+            background-color: #dc3545;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="password"] {
+            width: calc(100% - 20px);
+            padding: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Panel de Administración</h1>
+</header>
+
+<div class="container-admin">
+    <nav>
+        <button onclick="logout()">Cerrar sesión</button>
+    </nav>
+
+    <section>
+        <h2>Crear Nuevo Operador</h2>
+        <form id="crear-operador-form">
+            <div class="form-group">
+                <label for="nombre-operador">Nombre:</label>
+                <input type="text" id="nombre-operador" required />
+            </div>
+            <div class="form-group">
+                <label for="apellido-operador">Apellido:</label>
+                <input type="text" id="apellido-operador" required />
+            </div>
+            <div class="form-group">
+                <label for="email-operador">Email:</label>
+                <input type="email" id="email-operador" required />
+            </div>
+            <div class="form-group">
+                <label for="password-operador">Contraseña:</label>
+                <input type="password" id="password-operador" required />
+            </div>
+            <button type="submit">Crear Operador</button>
+        </form>
+    </section>
+
+    <hr style="margin: 2rem 0;">
+    <section>
+        <h2>Mis Operadores</h2>
+        <button onclick="cargarOperadores()">Actualizar lista</button>
+        <ul id="lista-operadores"></ul>
+    </section>
+</div>
+
+<script>
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        alert("No has iniciado sesión.");
+        window.location.href = "/";
+    }
+
+    // Manejar envío del formulario de creación
+    document.getElementById("crear-operador-form").addEventListener("submit", function(event) {
+        event.preventDefault(); // Evita el envío del formulario tradicional
+        crearOperador();
+    });
+
+    function crearOperador() {
+        const name = document.getElementById("nombre-operador").value;
+        const lastName = document.getElementById("apellido-operador").value;
+        const email = document.getElementById("email-operador").value;
+        const password = document.getElementById("password-operador").value;
+
+        fetch("/admin/crear-operador", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": token
+            },
+            body: JSON.stringify({
+                name,
+                lastName,
+                email,
+                password,
+                role: 1 // Siempre 1 para operadores
+            })
+        })
+        .then(res => {
+            if (!res.ok) {
+                return res.json().then(err => { throw new Error(err.message || "Error al crear operador"); });
+            }
+            return res.json();
+        })
+        .then(data => {
+            alert("Operador creado correctamente: " + (data.message || ""));
+            // Limpiar formulario
+            document.getElementById("crear-operador-form").reset();
+            // Actualizar lista de operadores
+            cargarOperadores();
+        })
+        .catch(err => {
+            alert("Error: " + err.message);
+        });
+    }
+
+
+    function cargarOperadores() {
+        fetch("/admin/listar-operadores", {
+            method: "GET",
+            headers: {
+                "Authorization": token
+            }
+        })
+        .then(res => {
+            if (!res.ok) {
+                // Si la respuesta no es OK, intenta leer el error JSON del servidor
+                return res.json().then(err => { throw new Error(err.message || "Error al listar operadores"); });
+            }
+            return res.json();
+        })
+        .then(operadores => {
+            const lista = document.getElementById("lista-operadores");
+            lista.innerHTML = "";
+
+            if (operadores.length === 0) {
+                lista.innerHTML = "<li>No hay operadores registrados.</li>";
+                return;
+            }
+
+            operadores.forEach(op => {
+                const li = document.createElement("li");
+                // Modificación: No mostrar el ID de usuario directamente.
+                li.textContent = `Nombre: ${op.name} ${op.lastName} - Email: ${op.email}`;
+                
+                const accionesSpan = document.createElement("span");
+                accionesSpan.style.display = "flex";
+
+                const editar = document.createElement("span");
+                editar.textContent = "Editar";
+                editar.className = "editar";
+                editar.onclick = () => alert("Funcionalidad de editar pendiente para el operador con ID: " + (op.id));
+                accionesSpan.appendChild(editar);
+
+                const eliminar = document.createElement("span");
+                eliminar.textContent = "Eliminar";
+                eliminar.className = "eliminar";
+                eliminar.onclick = () => eliminarOperador(op.id); 
+
+                accionesSpan.appendChild(eliminar);
+                li.appendChild(accionesSpan);
+                lista.appendChild(li);
+            });
+        })
+        .catch(err => {
+            alert("Error: " + err.message); // Muestra el mensaje de error del backend si fue capturado
+        });
+    }
+
+    function eliminarOperador(userId) {
+        if (!confirm("¿Seguro que quieres eliminar este operador? Esta acción es irreversible y eliminará el usuario de forma permanente.")) return;
+
+        fetch(`/admin/eliminar-operador/${userId}`, {
+            method: "DELETE",
+            headers: {
+                "Authorization": token
+            }
+        })
+        .then(res => {
+            if (!res.ok) {
+                return res.json().then(err => { throw new Error(err.message || "Error al eliminar operador"); });
+            }
+            alert("Operador eliminado correctamente");
+            cargarOperadores();
+        })
+        .catch(err => {
+            alert("Error: " + err.message);
+        });
+    }
+
+    function logout() {
+        localStorage.removeItem("token");
+        window.location.href = "/";
+    }
+
+    // Cargar operadores al entrar a la página
+    window.onload = cargarOperadores;
+</script>
+
+</body>
+</html>

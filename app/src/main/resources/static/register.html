@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OrderApp - Registro</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2.5rem 3rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            max-width: 360px;
+            width: 90%;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0 0 0.3rem;
+            font-weight: 700;
+            font-size: 2rem;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-weight: 400;
+            font-size: 1.3rem;
+            color: #ddd;
+            margin-bottom: 1.8rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            border: none;
+            font-size: 1rem;
+            outline: none;
+            font-family: 'Inter', sans-serif;
+        }
+
+        button {
+            width: 100%;
+            padding: 0.85rem 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            background-color: #f6ad55;
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        button:hover {
+            background-color: #ed8936;
+        }
+
+        .message {
+            min-height: 1.4em;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: #ffbaba;
+        }
+
+        .message.success {
+            color: #a8ffb4;
+        }
+
+        .link {
+            font-size: 0.9rem;
+            color: #ddd;
+        }
+        .link a {
+            color: #f6ad55;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 400px) {
+            .container {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>OrderApp</h1>
+        <h2>Regístrate</h2>
+        <input id="nameReg" type="text" placeholder="Nombre" />
+        <input id="lastNameReg" type="text" placeholder="Apellido" />
+        <input id="emailReg" type="email" placeholder="Correo electrónico" />
+        <input id="passReg" type="password" placeholder="Contraseña" />
+        <button id="btnRegister">Crear Cuenta</button>
+        <p class="message" id="registerMessage"></p>
+        <div class="link">
+            ¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a>
+        </div>
+    </div>
+
+    <script>
+        const URL = "http://34.176.244.119";
+
+        document.getElementById('btnRegister').addEventListener('click', async () => {
+            const name = document.getElementById('nameReg').value.trim();
+            const lastName = document.getElementById('lastNameReg').value.trim();
+            const email = document.getElementById('emailReg').value.trim();
+            const password = document.getElementById('passReg').value.trim();
+            const message = document.getElementById('registerMessage');
+            message.style.color = '#ffbaba'; // reset color
+            message.textContent = '';
+
+            if (!name || !lastName || !email || !password) {
+                message.textContent = 'Completa todos los campos.';
+                return;
+            }
+
+            try {
+                const res = await fetch(`${URL}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, lastName, email, password, role: 0 })
+                });
+
+                if (res.ok) {
+                    message.style.color = '#a8ffb4';
+                    message.textContent = 'Usuario registrado correctamente. Puedes iniciar sesión.';
+                } else {
+                    message.style.color = '#ffbaba';
+                    message.textContent = 'Error al registrar usuario.';
+                }
+            } catch (error) {
+                message.style.color = '#ffbaba';
+                message.textContent = 'Error en el servidor, intenta más tarde.';
+                console.error(error);
+            }
+        });
+    </script>
+</body>
+</html>
