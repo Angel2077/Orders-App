@@ -83,20 +83,10 @@ class OrderViewModelFactory(
 }
 
 
-// Define tus rutas de navegación como constantes (buena práctica)
-// ¡ESTE ES EL OBJETO ROUTES ACTUALIZADO!
-object Routes {
-    const val MAIN_MENU_SCREEN = "main_menu_screen"
-    const val PRODUCT_LIST_SCREEN = "product_list_screen"
-    const val COMPONENT_LIST_SCREEN = "component_list_screen"
-    const val ORDER_SCREEN = "order_screen"
-    const val LISTADO_PEDIDO_SCREEN = "listado_pedido_screen" // <-- ¡NUEVA RUTA AÑADIDA!
-    const val ORDER_DETAIL_ARG = "pedidoId"
-    const val ORDER_DETAIL_SCREEN = "order_detail_screen/{${ORDER_DETAIL_ARG}}" // <-- ¡NUEVA RUTA AÑADIDA!
-}
 
 
-class MainActivity : ComponentActivity() {
+
+class MainActivity2 : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
