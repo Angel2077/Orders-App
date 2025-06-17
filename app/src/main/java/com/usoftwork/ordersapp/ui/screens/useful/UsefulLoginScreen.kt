@@ -1,9 +1,7 @@
-@file:Suppress("UNCHECKED_CAST")
-
 package com.usoftwork.ordersapp.ui.screens.useful
-
 import android.app.Application
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
@@ -36,31 +34,178 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.usoftwork.ordersapp.ui.ViewModel.LoginViewModel
+
+import io.ktor.client.*
+import io.ktor.client.engine.android.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.logging.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
 import com.usoftwork.ordersapp.R
 import com.usoftwork.ordersapp.Routes
 import com.usoftwork.ordersapp.data.classes.CustomButton
-import com.usoftwork.ordersapp.ui.theme.DarkNavyBlue
-import com.usoftwork.ordersapp.ui.theme.DarkRed
-import com.usoftwork.ordersapp.ui.theme.Dustwhite
-import com.usoftwork.ordersapp.ui.theme.LocalDarkTheme
-import com.usoftwork.ordersapp.ui.theme.White
-import com.usoftwork.ordersapp.ui.theme.grey
+import com.usoftwork.ordersapp.ui.theme.*
+import io.ktor.client.call.body
+import kotlinx.serialization.json.Json
+
+// --- 1. Modelos de Datos ---
+
+@Serializable
+data class Usuario(
+    val id: Int? = null,
+    val name: String,
+    val lastName: String,
+    val email: String,
+    val password: String = "",
+    val role: Int = 1
+)
+
+@Serializable
+data class LoginRequest(
+    val email: String,
+    val password: String
+)
+
+@Serializable
+data class LoginResponse(
+    val token: String,
+    val user: Usuario
+)
+
+@Serializable
+data class MessageResponse(
+    val message: String
+)
+
+// --- 2. Servicio API (AuthService) ---
+
+// Reemplaza con la IP real de tu VM
+const val BASE_URL = "http://34.176.244.119:80"
+
+class AuthService {
+
+    private val client = HttpClient(Android) {
+        install(ContentNegotiation) {
+            json(Json {
+                prettyPrint = true
+                isLenient = true
+                ignoreUnknownKeys = true
+            })
+        }
+        install(Logging) {
+            logger = object : Logger {
+                override fun log(message: String) {
+                    android.util.Log.d("KtorClient", message)
+                }
+            }
+            level = LogLevel.ALL
+        }
+    }
+
+    suspend fun login(request: LoginRequest): Result<LoginResponse> {
+        return try {
+            val response = client.post("$BASE_URL/login-mobile") {
+                contentType(ContentType.Application.Json)
+                setBody(request) }
+            if (response.status.isSuccess()) {
+                Result.success(response.body<LoginResponse>())
+            } else {
+                val errorBody = response.body<MessageResponse>()
+                Result.failure(Exception(errorBody.message ?: "Error condescension en el login"))
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("AuthService", "Error en la petición de login: ${e.message}", e)
+            Result.failure(Exception("Error de conexión o de red: ${e.message}"))
+        }
+    }
+}
+
+// --- 3. ViewModel (LoginViewModel) ---
+
+class LoginViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val authService = AuthService()
+
+    fun validateLogin(email: String, password: String, onResult: (Boolean) -> Unit, onError: (String) -> Unit) {
+        viewModelScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                Log.d("AuthService", "Enviando login con email: $email, password: $password")
+                authService.login(LoginRequest(email, password))
+            }
+
+            result.onSuccess { loginResponse ->
+                Log.d("LoginViewModel", "Login exitoso. Token: ${loginResponse.token}, User: ${loginResponse.user.email}")
+                val sharedPrefs = getApplication<Application>().getSharedPreferences("auth_prefs", 0)
+                sharedPrefs.edit().putString("auth_token", loginResponse.token).apply()
+                sharedPrefs.edit().putInt("user_id", loginResponse.user.id ?: -1).apply()
+                sharedPrefs.edit().putInt("user_role", loginResponse.user.role).apply()
+                onResult(true)
+            }.onFailure { exception ->
+                Log.e("LoginViewModel", "Fallo en el login: ${exception.message}", exception)
+                onError(exception.message ?: "Error desconocido")
+                onResult(false)
+            }
+        }
+    }
+
+    fun getAuthToken(): String? {
+        val sharedPrefs = getApplication<Application>().getSharedPreferences("auth_prefs", 0)
+        return sharedPrefs.getString("auth_token", null)
+    }
+
+    fun getUserRole(): Int? {
+        val sharedPrefs = getApplication<Application>().getSharedPreferences("auth_prefs", 0)
+        val role = sharedPrefs.getInt("user_role", -1)
+        return if (role != -1) role else null
+    }
+
+    fun getUserId(): Int? {
+        val sharedPrefs = getApplication<Application>().getSharedPreferences("auth_prefs", 0)
+        val id = sharedPrefs.getInt("user_id", -1)
+        return if (id != -1) id else null
+    }
+
+    fun logout() {
+        val sharedPrefs = getApplication<Application>().getSharedPreferences("auth_prefs", 0)
+        sharedPrefs.edit().clear().apply()
+        Log.d("LoginViewModel", "Sesión cerrada, token eliminado.")
+    }
+}
+
+// Factory para el ViewModel (se sigue necesitando si lo creas manualmente)
+class LoginViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
+    override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return LoginViewModel(application) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
+}
+
+
+// --- 4. Composable LoginScreen y Funciones Auxiliares ---
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun LoginScreen(navController: NavHostController, scrollState: ScrollState) {
     val focusManager = LocalFocusManager.current
-    val scrollState = rememberScrollState()
+    val currentScrollState = rememberScrollState() // Renombré para evitar conflicto con el parámetro
     val context = LocalContext.current
-    val loginViewModel: LoginViewModel = viewModel (
-        factory = LoginViewModelFactory(context.applicationContext as android.app.Application)
+    val loginViewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel ( // Uso el ViewModel Compose helper
+        factory = LoginViewModelFactory(context.applicationContext as Application)
     )
 
     var username by remember { mutableStateOf("") }
@@ -70,8 +215,8 @@ fun LoginScreen(navController: NavHostController, scrollState: ScrollState) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(scrollState),
-                verticalArrangement = Arrangement.Center,
+            .verticalScroll(currentScrollState), // Usar el scrollState localmente creado
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
@@ -154,11 +299,7 @@ fun LoginScreen(navController: NavHostController, scrollState: ScrollState) {
     }
 }
 
-class LoginViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
-    override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
-        return LoginViewModel(application) as T
-    }
-}
+// Función auxiliar para el intento de login (mantenerla privada si no se usa fuera)
 private fun attemptLogin(
     username: String,
     password: String,
@@ -169,20 +310,14 @@ private fun attemptLogin(
     if (username.isBlank() || password.isBlank()) {
         onError("Por favor, complete todos los campos.")
     } else {
-        viewModel.validateLogin(username, password) { success ->
+        viewModel.validateLogin(username, password, onResult = { success ->
             if (success) {
-                navController.navigate(Routes.HOME)
+                navController.navigate(Routes.HOME) {
+                    popUpTo(Routes.LOGIN) { inclusive = true } // Limpia el back stack
+                }
             } else {
-                onError("Credenciales incorrectas.")
+                // El onError ya se propaga desde el ViewModel, así que no es necesario manejarlo aquí de nuevo
             }
-        }
+        }, onError = onError) // Pasa el callback onError al ViewModel
     }
 }
-
-@Preview
-@Composable
-fun LoginScreenPreview() {
-    LoginScreen(navController = NavHostController(LocalContext.current), scrollState = rememberScrollState())
-}
-
-

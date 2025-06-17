@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- ¡IMPORTANTE! Reemplaza esta IP con la IP exacta de tu VM si cambia. -->
+        <domain includeSubdomains="true">34.176.244.119</domain>
+        <!-- Si tu Ktor backend está en un puerto diferente al 80, sigue usando solo la IP. -->
+        <!-- Android maneja los puertos aparte de la configuración de seguridad de dominio. -->
+    </domain-config>
+</network-security-config>

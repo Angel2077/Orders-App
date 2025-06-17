@@ -53,13 +53,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.usoftwork.ordersapp.data.classes.CreatePedido
 import com.usoftwork.ordersapp.data.classes.CustomButton
 import com.usoftwork.ordersapp.data.classes.ListadoPedido
 import com.usoftwork.ordersapp.data.functions.SalesAnalysis
 import com.usoftwork.ordersapp.ui.screens.*
-import com.usoftwork.ordersapp.ui.screens.useful.Create_Pedido
-import com.usoftwork.ordersapp.ui.screens.useful.LoginScreen
+import com.usoftwork.ordersapp.ui.screens.useful.*
 import com.usoftwork.ordersapp.ui.theme.*
 import com.usoftwork.ordersapp.ui.theme.OrdersAppTheme
 import conexiondb.DatabaseConnector
@@ -104,125 +102,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-
-
-//@RequiresApi(Build.VERSION_CODES.O)
-//@Composable
-//
-//fun Login(navController: NavHostController, scrollState: ScrollState) {
-//    val focusManager = LocalFocusManager.current
-//    var correo by remember { mutableStateOf("") }
-//    var contrasenna by remember { mutableStateOf("") }
-//    var error by remember { mutableStateOf("") }
-//
-//    Column(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .verticalScroll(scrollState),
-//                verticalArrangement = Arrangement.Center,
-//        horizontalAlignment = Alignment.CenterHorizontally
-//
-//    ) {
-//        BoxWithConstraints {
-//            val imageHeight = when {
-//                maxWidth <= 200.dp -> 100.dp
-//                maxWidth <= 350.dp -> 150.dp
-//                maxWidth <= 500.dp -> 200.dp
-//                else -> 300.dp
-//            }
-//            Image(
-//                painter = painterResource(id = R.drawable.logo),
-//                contentDescription = "Logo de la aplicación",
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(imageHeight)
-//            )
-//        }
-//        OutlinedTextField(
-//            value = correo,
-//            onValueChange = { correo = it },
-//            label = { Text("Ingrese su correo") },
-//            singleLine = true,
-//            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-//            keyboardActions = KeyboardActions(
-//                onNext = { focusManager.moveFocus(FocusDirection.Down) }
-//            )
-//        )
-//
-//        OutlinedTextField(
-//            value = contrasenna,
-//            onValueChange = { contrasenna = it },
-//            label = { Text("Ingrese Contraseña") },
-//            singleLine = true,
-//            visualTransformation = PasswordVisualTransformation(),
-//            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-//            keyboardActions = KeyboardActions(
-//                onDone = {
-//                    focusManager.clearFocus()
-//                    if (correo.isEmpty() || contrasenna.isEmpty()) {
-//                        error = "Por favor, complete todos los campos."
-//                    } else {
-//                        validarCredencialesAsync(correo, contrasenna) { isValid ->
-//                            if (isValid) {
-//                                navController.navigate(Routes.HOME)
-//                            } else {
-//                                error = "Credenciales incorrectas."
-//                            }
-//                        }
-//                    }
-//                }
-//            )
-//        )
-//
-//        CustomButton(
-//            text = "Ingresar",
-//            contentColor = White,
-//            modifier = Modifier.width(310.dp),
-//            center = true,
-//            onClick = {
-//                if (correo.isEmpty() || contrasenna.isEmpty()) {
-//                    error = "Por favor, complete todos los campos."
-//                } else {
-//                    validarCredencialesAsync(correo, contrasenna) { isValid ->
-//                        if (isValid) {
-//                            navController.navigate(Routes.HOME)
-//                        } else {
-//                            error = "Credenciales incorrectas."
-//                        }
-//                    }
-//                }
-//            },
-//            containerColor = DarkRed // si quieres mantener ese color
-//        )
-//
-//        Text(
-//            text = "¿Eres nuevo? \n"  +
-//                    "¡Registrate con nosotros!",
-//            textAlign = TextAlign.Center,
-//            color = if (LocalDarkTheme.current.value) Dustwhite else grey, // Cambia el color según el tema
-//            fontSize  = 16.sp)
-//        CustomButton(
-//            text = "Registrarse",
-//            contentColor = White,
-//            modifier = Modifier.width(310.dp),
-//            center = true,
-//            onClick = { navController.navigate(Routes.REGISTER) },
-//            containerColor = DarkNavyBlue
-//        )
-//        Text(
-//            text = "¿Olvidó su contraseña?",
-//            color = if (LocalDarkTheme.current.value) Dustwhite else grey, // Cambia el color según el tema
-//            fontSize = 16.sp,
-//            modifier = Modifier.clickable {
-//                navController.navigate(Routes.REGISTER)
-//            },
-//        )
-//
-//    }
-//}
-
-
 @Composable
 fun Register(navController: NavHostController, scrollState: ScrollState) {
     val focusManager = LocalFocusManager.current
