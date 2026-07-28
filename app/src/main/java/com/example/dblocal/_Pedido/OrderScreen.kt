@@ -68,6 +68,7 @@ fun OrderScreen(
     val showOrderSummary by orderViewModel.showOrderSummary.collectAsState()
     val clientName by orderViewModel.clientName.collectAsState()
 
+
     val snackbarHostState = remember { SnackbarHostState() }
 
     // Colectar mensajes del ViewModel para mostrar en Snackbar
